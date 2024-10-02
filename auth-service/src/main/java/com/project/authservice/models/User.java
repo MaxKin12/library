@@ -18,11 +18,11 @@ import java.util.List;
 public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(nullable = false)
+    @Column(name="id", nullable = false)
     private Integer id;
-    @Column(unique = true, length = 100, nullable = false)
+    @Column(name="email", unique = true, length = 100, nullable = false)
     private String email;
-    @Column(nullable = false)
+    @Column(name="password", nullable = false)
     private String password;
 
     @Override
