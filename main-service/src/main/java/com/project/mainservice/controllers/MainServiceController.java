@@ -12,7 +12,6 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/books")
 public class MainServiceController {
     private final BookMapper bookMapper;
     private final BookService bookService;

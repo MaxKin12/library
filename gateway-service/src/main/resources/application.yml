@@ -5,11 +5,17 @@ spring:
     name: gateway
   cloud:
     gateway:
+      discovery:
+        locator:
+          enabled: true
+          lower-case-service-id: true
       routes:
         - id: main-service-route
           uri: lb://main-service
           predicates:
-            - Path=/**
+            - Path=/books/**
+          filters:
+            - StripPrefix=1
 eureka:
   client:
     healthcheck:
