@@ -9,14 +9,12 @@ spring:
         locator:
           enabled: true
           lower-case-service-id: true
-      routes:
-        - id: main-service-route
-          uri: lb://main-service
-          predicates:
-            - Path=/books/**
-          filters:
-            - StripPrefix=1
 eureka:
   client:
     healthcheck:
       enabled: true
+
+security:
+  jwt:
+    secret-key: 198f0b715d674359205b54c51a24ce3632d0fa75882558c2b7e40d07d3b60027
+    prefix: "Bearer "
