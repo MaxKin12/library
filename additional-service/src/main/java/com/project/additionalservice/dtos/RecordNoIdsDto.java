@@ -5,7 +5,8 @@ import lombok.Data;
 import java.time.LocalDateTime;
 
 @Data
-public class RecordNoIdDto {
+public class RecordNoIdsDto {
+    private Long bookId;
     private LocalDateTime takeTime;
     private LocalDateTime returnTime;
 }

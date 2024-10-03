@@ -1,11 +1,14 @@
 package com.project.mainservice.controllers;
 
+import com.project.mainservice.clients.AdditionalServiceClient;
 import com.project.mainservice.dtos.BookDto;
 import com.project.mainservice.dtos.BookNoIdDto;
 import com.project.mainservice.mappers.BookMapper;
 import com.project.mainservice.models.Book;
 import com.project.mainservice.services.BookService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -15,6 +18,7 @@ import java.util.List;
 public class MainServiceController {
     private final BookMapper bookMapper;
     private final BookService bookService;
+    private final AdditionalServiceClient client;
 
     @GetMapping("/")
     public List<BookDto> getAllBooks() {
@@ -35,9 +39,10 @@ public class MainServiceController {
     }
 
     @PostMapping("/create")
-    public BookDto createBook(@RequestBody BookNoIdDto bookNoIdDto) {
+    public ResponseEntity<BookDto> createBook(@RequestBody BookNoIdDto bookNoIdDto) {
         Book book = bookService.create(bookMapper.toNoIdModel(bookNoIdDto));
-        return bookMapper.toDto(book);
+        client.addRecord(book.getId());
+        return ResponseEntity.status(HttpStatus.OK).body(bookMapper.toDto(book));
     }
 
     @PostMapping("/update/{id}")

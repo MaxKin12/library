@@ -12,12 +12,22 @@ import java.util.List;
 public class RecordService {
     public final RecordRepository recordRepository;
 
-    public List<Record> findAvailableRecordsWithAvailableBooks() {
+    public List<Record> findAll() {
+        return recordRepository.findAll();
+    }
+
+    public List<Record> findRecordsWithAvailableBooks() {
         return recordRepository.findAvailableBooks();
     }
 
-    public Record update(Record editedRecord, Long oldRecordId) {
-        editedRecord.setId(oldRecordId);
+    public Record update(Record editedRecord, Long oldBookId) {
+        editedRecord.setBookId(oldBookId);
         return recordRepository.save(editedRecord);
+    }
+
+    public void saveRecord(Long bookId) {
+        Record record = new Record();
+        record.setBookId(bookId);
+        recordRepository.save(record);
     }
 }

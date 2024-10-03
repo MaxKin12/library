@@ -15,8 +15,10 @@ import java.time.LocalDateTime;
 public class Record {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name="book_id")
+    @Column(name="id")
     private Long id;
+    @Column(name="book_id", unique = true, nullable = false)
+    private Long bookId;
     @Column(name="take_time")
     private LocalDateTime takeTime;
     @Column(name="return_time")
