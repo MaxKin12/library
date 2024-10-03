@@ -2,7 +2,6 @@ package com.project.gatewayservice.security;
 
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
@@ -20,7 +19,6 @@ import reactor.core.publisher.Mono;
 public class AuthenticationFilter implements GatewayFilter {
     private final RouterValidator routerValidator;
     private final JwtUtil jwtUtil;
-
     @Value("${security.jwt.prefix}")
     public String TOKEN_PREFIX;
 
@@ -29,21 +27,19 @@ public class AuthenticationFilter implements GatewayFilter {
         ServerHttpRequest request = exchange.getRequest();
 
         if (routerValidator.isSecured.test(request)) {
-            if (this.isAuthMissing(request) || this.isPrefixMissing(request))
-                return this.onError(exchange, "Authorization header is missing in request");
+            if (isAuthMissing(request) || isPrefixMissing(request))
+                return onError(exchange, "Authorization header is missing in request");
 
-            final String token = this.getAuthHeader(request);
+            final String token = getAuthHeader(request);
 
             if (jwtUtil.isInvalid(token))
-                return this.onError(exchange, "Authorization header is invalid");
+                return onError(exchange, "Authorization header is invalid");
 
-            this.populateRequestWithHeaders(exchange, token);
+            varifyAndSetRequestHeaders(exchange, token);
         }
         return chain.filter(exchange);
     }
 
-
-    /*PRIVATE*/
 
     private Mono<Void> onError(ServerWebExchange exchange, String err) {
         ServerHttpResponse response = exchange.getResponse();
@@ -52,7 +48,7 @@ public class AuthenticationFilter implements GatewayFilter {
     }
 
     private String getAuthHeader(ServerHttpRequest request) {
-        var header = request.getHeaders().getOrEmpty("Authorization").get(0);
+        String header = request.getHeaders().getOrEmpty("Authorization").get(0);
         return header.replace(TOKEN_PREFIX,"").trim();
     }
 
@@ -61,17 +57,15 @@ public class AuthenticationFilter implements GatewayFilter {
     }
 
     private boolean isPrefixMissing(ServerHttpRequest request) {
-        var header = request.getHeaders().getFirst ("Authorization");
-        assert header != null;
+        String header = request.getHeaders().getOrEmpty("Authorization").get(0);
         return !header.startsWith(TOKEN_PREFIX);
     }
 
-    private void populateRequestWithHeaders(ServerWebExchange exchange, String token) {
-        Claims claims = jwtUtil.getAllClaimsFromToken(token);
+    private void varifyAndSetRequestHeaders(ServerWebExchange exchange, String token) {
+        Claims claims = jwtUtil.verify(token);
         exchange.getRequest().mutate()
                 .header("id", String.valueOf(claims.get("id")))
                 .header("roles", String.valueOf(claims.get("roles")))
-                .header("tenantId", String.valueOf(claims.get("tenantId")))
                 .build();
     }
 }

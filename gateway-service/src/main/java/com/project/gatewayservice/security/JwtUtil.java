@@ -15,7 +15,7 @@ public class JwtUtil {
     @Value("${security.jwt.secret-key}")
     private String secretKey;
 
-    public Claims getAllClaimsFromToken(String token) {
+    public Claims verify(String token) {
         return Jwts
                 .parser()
                 .verifyWith(getSignInKey())
@@ -25,7 +25,7 @@ public class JwtUtil {
     }
 
     public boolean isInvalid(String token) {
-        return getAllClaimsFromToken(token).getExpiration().before(new Date());
+        return verify(token).getExpiration().before(new Date());
     }
 
     private SecretKey getSignInKey() {
