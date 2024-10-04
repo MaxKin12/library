@@ -1,10 +1,7 @@
 package com.project.authservice.exceptions;
 
-import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.security.SignatureException;
-import org.springframework.http.HttpStatusCode;
-import org.springframework.http.ProblemDetail;
-import org.springframework.security.access.AccessDeniedException;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AccountStatusException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -13,43 +10,37 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
-    public ProblemDetail handleSecurityException(Exception exception) {
-        ProblemDetail errorDetail = null;
+    public ResponseEntity<AuthError> handleSecurityException(Exception e) {
+        e.printStackTrace();
 
-        exception.printStackTrace();
-
-        if (exception instanceof BadCredentialsException) {
-            errorDetail = ProblemDetail.forStatusAndDetail(HttpStatusCode.valueOf(401), exception.getMessage());
-            errorDetail.setProperty("description", "The username or password is incorrect");
-
-            return errorDetail;
+        if (e instanceof BadCredentialsException) {
+            return new ResponseEntity<>(new AuthError(HttpStatus.UNAUTHORIZED.value(),
+                    "The username or password is incorrect"), HttpStatus.UNAUTHORIZED);
         }
 
-        if (exception instanceof AccountStatusException) {
-            errorDetail = ProblemDetail.forStatusAndDetail(HttpStatusCode.valueOf(403), exception.getMessage());
-            errorDetail.setProperty("description", "The account is locked");
+        if (e instanceof AuthException) {
+            return new ResponseEntity<>(new AuthError(HttpStatus.BAD_REQUEST.value(),
+                    e.getMessage()), HttpStatus.BAD_REQUEST);
         }
 
-        if (exception instanceof AccessDeniedException) {
-            errorDetail = ProblemDetail.forStatusAndDetail(HttpStatusCode.valueOf(403), exception.getMessage());
-            errorDetail.setProperty("description", "You are not authorized to access this resource");
+        if (e instanceof AccountStatusException) {
+            return new ResponseEntity<>(new AuthError(HttpStatus.FORBIDDEN.value(),
+                    "The account is locked"), HttpStatus.FORBIDDEN);
         }
 
-        if (exception instanceof SignatureException) {
-            errorDetail = ProblemDetail.forStatusAndDetail(HttpStatusCode.valueOf(403), exception.getMessage());
-            errorDetail.setProperty("description", "The JWT signature is invalid");
+        if (e instanceof SignUpException) {
+            return new ResponseEntity<>(new AuthError(HttpStatus.BAD_REQUEST.value(),
+                    e.getMessage()), HttpStatus.BAD_REQUEST);
         }
 
-        if (exception instanceof ExpiredJwtException) {
-            errorDetail = ProblemDetail.forStatusAndDetail(HttpStatusCode.valueOf(403), exception.getMessage());
-            errorDetail.setProperty("description", "The JWT token has expired");
+        if (e instanceof TokenGenerationException) {
+            return new ResponseEntity<>(new AuthError(HttpStatus.BAD_REQUEST.value(),
+                    e.getMessage()), HttpStatus.BAD_REQUEST);
         }
 
-        if (errorDetail == null) {
-            errorDetail = ProblemDetail.forStatusAndDetail(HttpStatusCode.valueOf(500), exception.getMessage());
-            errorDetail.setProperty("description", "Unknown internal server error.");
+        else {
+            return new ResponseEntity<>(new AuthError(HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                    "Unknown internal server error"), HttpStatus.INTERNAL_SERVER_ERROR);
         }
-
-        return errorDetail;
     }
 }

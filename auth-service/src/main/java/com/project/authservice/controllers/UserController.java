@@ -2,7 +2,6 @@ package com.project.authservice.controllers;
 
 import com.project.authservice.models.User;
 import com.project.authservice.services.UserService;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -19,9 +18,7 @@ public class UserController {
     }
 
     @GetMapping("/")
-    public ResponseEntity<List<User>> allUsers() {
-        List <User> users = userService.allUsers();
-
-        return ResponseEntity.ok(users);
+    public List<User> allUsers() {
+        return userService.findAll();
     }
 }

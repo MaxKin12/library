@@ -1,13 +1,12 @@
 package com.project.authservice.controllers;
 
+import com.project.authservice.dtos.TokenDto;
 import com.project.authservice.dtos.UserDto;
 import com.project.authservice.mappers.UserMapper;
 import com.project.authservice.models.User;
-import com.project.authservice.responses.LoginResponse;
 import com.project.authservice.services.AuthenticationService;
 import com.project.authservice.services.JwtService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -20,16 +19,14 @@ public class AuthenticationController {
     private final UserMapper userMapper;
 
     @PostMapping("/signup")
-    public ResponseEntity<User> register(@RequestBody UserDto userDto) {
-        User registeredUser = authenticationService.signup(userMapper.toModel(userDto));
-        return ResponseEntity.ok(registeredUser);
+    public UserDto register(@RequestBody UserDto userDto) {
+        return userMapper.toDto(authenticationService.signup(userMapper.toModel(userDto)));
     }
 
     @PostMapping("/login")
-    public ResponseEntity<LoginResponse> authenticate(@RequestBody UserDto userDto) {
+    public TokenDto authenticate(@RequestBody UserDto userDto) {
         User authenticatedUser = authenticationService.authenticate(userMapper.toModel(userDto));
         String jwtToken = jwtService.generateToken(authenticatedUser);
-        LoginResponse loginResponse = authenticationService.getLoginResponse(jwtToken);
-        return ResponseEntity.ok(loginResponse);
+        return authenticationService.getTokenDto(jwtToken);
     }
 }

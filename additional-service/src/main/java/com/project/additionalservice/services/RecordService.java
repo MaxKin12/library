@@ -1,5 +1,7 @@
 package com.project.additionalservice.services;
 
+import com.project.additionalservice.exceptions.DBException;
+import com.project.additionalservice.exceptions.ResourceNotFoundException;
 import com.project.additionalservice.models.Record;
 import com.project.additionalservice.repositories.RecordRepository;
 import lombok.RequiredArgsConstructor;
@@ -17,17 +19,26 @@ public class RecordService {
     }
 
     public List<Record> findRecordsWithAvailableBooks() {
-        return recordRepository.findAvailableBooks();
+        return recordRepository.findAvailableBooks().orElseThrow(()-> new ResourceNotFoundException("No available books"));
     }
 
-    public Record update(Record editedRecord, Long oldBookId) {
-        editedRecord.setBookId(oldBookId);
-        return recordRepository.save(editedRecord);
+    public void update(Record editedRecord, Long oldBookId) {
+        recordRepository.findById(oldBookId).orElseThrow(()-> new ResourceNotFoundException("Record with id " +
+                oldBookId + " not found"));
+        recordRepository.updateRecordInfoByBookId(
+                oldBookId,
+                editedRecord.getTakeTime(),
+                editedRecord.getReturnTime()
+        );
     }
 
     public void saveRecord(Long bookId) {
         Record record = new Record();
         record.setBookId(bookId);
-        recordRepository.save(record);
+        try {
+            recordRepository.save(record);
+        } catch (Exception e) {
+            throw new DBException(e);
+        }
     }
 }

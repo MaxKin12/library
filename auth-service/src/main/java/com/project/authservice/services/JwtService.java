@@ -1,5 +1,6 @@
 package com.project.authservice.services;
 
+import com.project.authservice.exceptions.TokenGenerationException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
@@ -27,7 +28,11 @@ public class JwtService {
     }
 
     public String generateToken(UserDetails userDetails) {
-        return buildToken(new HashMap<>(), userDetails);
+        try {
+            return buildToken(new HashMap<>(), userDetails);
+        } catch (Exception e) {
+            throw new TokenGenerationException("Invalid attempt to generate token");
+        }
     }
 
     public String extractUsername(String token) {

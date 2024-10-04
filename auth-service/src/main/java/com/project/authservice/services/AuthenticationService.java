@@ -1,8 +1,10 @@
 package com.project.authservice.services;
 
+import com.project.authservice.dtos.TokenDto;
+import com.project.authservice.exceptions.AuthException;
+import com.project.authservice.exceptions.SignUpException;
 import com.project.authservice.models.User;
 import com.project.authservice.repositories.UserRepository;
-import com.project.authservice.responses.LoginResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -19,19 +21,29 @@ public class AuthenticationService {
 
     public User signup(User user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
+        try {
+            userRepository.save(user);
+        } catch (Exception e) {
+            throw new SignUpException(e);
+        }
         return userRepository.save(user);
     }
 
     public User authenticate(User user) {
-        return (User) authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
-                user.getEmail(),
-                user.getPassword())).getPrincipal();
+        try {
+            return (User) authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
+                    user.getEmail(),
+                    user.getPassword())
+            ).getPrincipal();
+        } catch (Exception e) {
+            throw new AuthException("Invalid login or password");
+        }
     }
 
-    public LoginResponse getLoginResponse(String jwtToken) {
-        LoginResponse loginResponse = new LoginResponse();
-        loginResponse.setToken(jwtToken);
-        loginResponse.setExpiresIn(jwtService.getExpirationTime());
-        return loginResponse;
+    public TokenDto getTokenDto(String jwtToken) {
+        TokenDto tokenDto = new TokenDto();
+        tokenDto.setToken(jwtToken);
+        tokenDto.setExpiresIn(jwtService.getExpirationTime());
+        return tokenDto;
     }
 }

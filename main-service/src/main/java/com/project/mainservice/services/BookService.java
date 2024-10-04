@@ -1,6 +1,5 @@
 package com.project.mainservice.services;
 
-import com.project.mainservice.dtos.BookDto;
 import com.project.mainservice.models.Book;
 import com.project.mainservice.repositories.BookRepository;
 import lombok.RequiredArgsConstructor;
@@ -30,8 +29,13 @@ public class BookService {
     }
 
     public Book update(Book editedBook, Long oldBookId) {
-        editedBook.setId(oldBookId);
-        return bookRepository.save(editedBook);
+        Book oldBook = bookRepository.findById(oldBookId).get();
+        oldBook.setIsbn(editedBook.getIsbn());
+        oldBook.setTitle(editedBook.getTitle());
+        oldBook.setGenre(editedBook.getGenre());
+        oldBook.setDescription(editedBook.getDescription());
+        oldBook.setDescription(editedBook.getAuthor());
+        return oldBook;
     }
 
     public void delete(Long id) {

@@ -1,10 +1,9 @@
-package com.project.authservice.responses;
+package com.project.authservice.dtos;
 
 import lombok.Data;
 
 @Data
-public class LoginResponse {
+public class TokenDto {
     private String token;
-
     private long expiresIn;
 }

@@ -1,0 +1,30 @@
+services:
+  my-sql-books:
+    build:
+      dockerfile: Dockerfile
+      context: ./books-db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: 12345
+    ports:
+      - 4000:3306
+
+  my-sql-records:
+    build:
+      dockerfile: Dockerfile
+      context: ./records-db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: 12345
+    ports:
+      - 5000:3306
+
+  my-sql-users:
+    build:
+      dockerfile: Dockerfile
+      context: ./users-db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: 12345
+    ports:
+      - 6000:3306
