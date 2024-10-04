@@ -7,6 +7,6 @@ COPY src src
 RUN ./mvnw clean -B package -DskipTests
 
 FROM openjdk:23-slim
-COPY --from=build target/main-service-0.0.1-SNAPSHOT.jar .
-EXPOSE 8081
-ENTRYPOINT ["java", "-jar", "main-service-0.0.1-SNAPSHOT.jar"]
+COPY --from=build target/additional-service-0.0.1-SNAPSHOT.jar .
+EXPOSE 8082
+ENTRYPOINT ["java", "-jar", "additional-service-0.0.1-SNAPSHOT.jar"]

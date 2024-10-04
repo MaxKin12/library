@@ -1,20 +1,4 @@
-server:
-  port: 8080
-spring:
-  application:
-    name: gateway
-  cloud:
-    gateway:
-      discovery:
-        locator:
-          enabled: true
-          lower-case-service-id: true
 eureka:
   client:
     healthcheck:
       enabled: true
-
-security:
-  jwt:
-    secret-key: 198f0b715d674359205b54c51a24ce3632d0fa75882558c2b7e40d07d3b60027
-    prefix: "Bearer "

@@ -7,7 +7,7 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: 12345
     ports:
-      - 4000:3306
+      - 3306
 
   my-sql-records:
     build:
@@ -17,7 +17,7 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: 12345
     ports:
-      - 5000:3306
+      - 3306
 
   my-sql-users:
     build:
@@ -27,4 +27,101 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: 12345
     ports:
-      - 6000:3306
+      - 3306
+
+  main-service:
+    build:
+      dockerfile: Dockerfile
+      context: ./main-service
+    restart: always
+    depends_on:
+      - my-sql-books
+      - eureka-service
+    environment:
+      spring.application.name: main-service
+      server.port: 8081
+
+      spring.datasource.url: "jdbc:mysql://my-sql-books:3306/library_main_service"
+      spring.datasource.username: root
+      spring.datasource.password: 12345
+
+      eureka.client.service-url.defaultZone: http://eureka-service:8761/eureka/
+
+      client.application.name: additional-service
+      additional-service.url: http://additional-service:8082/
+    ports:
+      - 8081
+
+  additional-service:
+    build:
+      dockerfile: Dockerfile
+      context: ./additional-service
+    restart: always
+    depends_on:
+      - my-sql-records
+      - eureka-service
+    environment:
+      spring.application.name: additional-service
+      server.port: 8082
+
+      spring.datasource.url: "jdbc:mysql://my-sql-records:3306/library_additional_service"
+      spring.datasource.username: root
+      spring.datasource.password: 12345
+
+      eureka.client.service-url.defaultZone: http://eureka-service:8761/eureka/
+    ports:
+      - 8082
+
+  auth-service:
+    build:
+      dockerfile: Dockerfile
+      context: ./auth-service
+    restart: always
+    depends_on:
+      - my-sql-users
+      - eureka-service
+    environment:
+      spring.application.name: auth-service
+      server.port: 8005
+
+      spring.datasource.url: "jdbc:mysql://my-sql-users:3306/library_auth_service"
+      spring.datasource.username: root
+      spring.datasource.password: 12345
+
+      eureka.client.service-url.defaultZone: http://eureka-service:8761/eureka/
+
+      security.jwt.secret-key: 198f0b715d674359205b54c51a24ce3632d0fa75882558c2b7e40d07d3b60027
+      security.jwt.expiration-time: 3600000
+    ports:
+      - 8005
+
+  gateway-service:
+    build:
+      dockerfile: Dockerfile
+      context: ./gateway-service
+    restart: always
+    depends_on:
+      - eureka-service
+    environment:
+      spring.application.name: gateway-service
+      server.port: 8080
+
+      eureka.client.service-url.defaultZone: http://eureka-service:8761/eureka/
+
+      security.jwt.secret-key: 198f0b715d674359205b54c51a24ce3632d0fa75882558c2b7e40d07d3b60027
+      security.jwt.prefix: "Bearer "
+    ports:
+      - 8080:8080
+
+  eureka-service:
+    build:
+      dockerfile: Dockerfile
+      context: ./eureka-service
+    restart: always
+    depends_on:
+      - my-sql-users
+    environment:
+      spring.application.name: eureka-server
+      server.port: 8761
+    ports:
+      - 8761

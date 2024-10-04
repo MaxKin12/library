@@ -29,7 +29,7 @@ CREATE TABLE `book` (
                         `author` varchar(50) DEFAULT NULL,
                         `description` varchar(200) DEFAULT NULL,
                         `genre` varchar(20) DEFAULT NULL,
-                        `isbn` varchar(17) NOT NULL,
+                        `isbn` varchar(13) NOT NULL,
                         `title` varchar(50) NOT NULL,
                         PRIMARY KEY (`id`),
                         UNIQUE KEY `UKehpdfjpu1jm3hijhj4mm0hx9h` (`isbn`)
