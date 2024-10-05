@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
-import java.util.Date;
 
 @Component
 public class JwtUtil {
@@ -24,8 +23,8 @@ public class JwtUtil {
                 .getPayload();
     }
 
-    public boolean isInvalid(String token) {
-        return verify(token).getExpiration().before(new Date());
+    public void isInvalid(String token) {
+        verify(token);
     }
 
     private SecretKey getSignInKey() {

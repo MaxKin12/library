@@ -1,14 +1,14 @@
 package com.project.gatewayservice.security;
 
+import com.project.gatewayservice.exceptions.TokenException;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpRequest;
-import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
@@ -27,24 +27,18 @@ public class AuthenticationFilter implements GatewayFilter {
         ServerHttpRequest request = exchange.getRequest();
 
         if (routerValidator.isSecured.test(request)) {
-            if (isAuthMissing(request) || isPrefixMissing(request))
-                return onError(exchange, "Authorization header is missing in request");
-
+            if (isAuthMissing(request) || isPrefixMissing(request)) {
+                throw new TokenException("Header Authorization is missing in request");
+            }
             final String token = getAuthHeader(request);
-
-            if (jwtUtil.isInvalid(token))
-                return onError(exchange, "Authorization header is invalid");
-
-            varifyAndSetRequestHeaders(exchange, token);
+            try {
+                jwtUtil.isInvalid(token);
+            } catch (JwtException e) {
+                throw new TokenException("Invalid JWT token");
+            }
+            setRequestHeaders(exchange, token);
         }
         return chain.filter(exchange);
-    }
-
-
-    private Mono<Void> onError(ServerWebExchange exchange, String err) {
-        ServerHttpResponse response = exchange.getResponse();
-        response.setStatusCode(HttpStatus.UNAUTHORIZED);
-        return response.setComplete();
     }
 
     private String getAuthHeader(ServerHttpRequest request) {
@@ -61,7 +55,7 @@ public class AuthenticationFilter implements GatewayFilter {
         return !header.startsWith(TOKEN_PREFIX);
     }
 
-    private void varifyAndSetRequestHeaders(ServerWebExchange exchange, String token) {
+    private void setRequestHeaders(ServerWebExchange exchange, String token) {
         Claims claims = jwtUtil.verify(token);
         exchange.getRequest().mutate()
                 .header("id", String.valueOf(claims.get("id")))

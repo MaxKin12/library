@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 @ControllerAdvice
 public class GlobalExceptionHandler {
     @ExceptionHandler
-    public ResponseEntity<RecordError> catchResourceNotFoundException(Exception e) {
+    public ResponseEntity<RecordError> handleException(Exception e) {
         e.printStackTrace();
 
         if (e instanceof ResourceNotFoundException) {

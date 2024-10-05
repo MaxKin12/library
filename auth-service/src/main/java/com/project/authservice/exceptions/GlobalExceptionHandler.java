@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<AuthError> handleSecurityException(Exception e) {
+    public ResponseEntity<AuthError> handleException(Exception e) {
         e.printStackTrace();
 
         if (e instanceof BadCredentialsException) {
