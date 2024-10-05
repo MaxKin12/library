@@ -2,3 +2,20 @@ eureka:
   client:
     healthcheck:
       enabled: true
+
+springdoc:
+  api-docs:
+    enabled: true
+    path: /api-docs
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui.html
+    urls:
+      - url: /api-docs
+        name: API Gateway Service
+      - url: /books/api-docs
+        name: Main Service
+      - url: /records/api-docs
+        name: Additional Service
+      - url: /auth/api-docs
+        name: Auth Service
