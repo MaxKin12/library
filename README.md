@@ -43,13 +43,13 @@ http://localhost:8080/auth/login
 As a result, it issues a JWT token that is valid for an hour.
 #### 3. Get all users (tokes is required): [GET]
 ```
-http://localhost:8080/auth/users/
+http://localhost:8080/auth/users
 ```
 ### Main-service:
 Contains the main functionality of the project - imitation of a library. Has database with books.
 #### 1. Get books list: [GET]
 ```
-http://localhost:8080/books/
+http://localhost:8080/books
 ```
 #### 2. Get book by id: [GET]
 ```
@@ -57,39 +57,39 @@ http://localhost:8080/books/{id}
 ```
 #### 3. Get book by ISBN: [GET]
 ```
-http://localhost:8080/books/{isbn}
+http://localhost:8080/books/isbn/{isbn}
 ```
 #### 4. Add new book: [POST]
 ```
-http://localhost:8080/books/create
+http://localhost:8080/books
 ```
 Invokes an automatic synchronous request to Additional-service to add a new record using Spring Cloud (FeignClient)
-#### 5. Update book info: [POST]
+#### 5. Update book info: [PATCH]
 ```
-http://localhost:8080/books/update
+http://localhost:8080/books/{id}
 ```
-#### 6. Delete book: [POST]
+#### 6. Delete book: [DELETE]
 ```
-http://localhost:8080/books/delete
+http://localhost:8080/books/{id}
 ```
 
 ### Additional-service:
 Additional library functionality. Stores records of whether a book is free/occupied (in the DB).
 #### 1. Get all records: [GET]
 ```
-http://localhost:8080/records/
+http://localhost:8080/records
 ```
 #### 2. Get available books records: [GET]
 ```
 http://localhost:8080/records/available
 ```
-#### 3. Update record: [POST]
+#### 3. Update record: [PATCH]
 ```
-http://localhost:8080/records/update
+http://localhost:8080/records/{book_id}
 ```
 #### 4. Add record: [POST]
 ```
-http://localhost:8080/records/add
+http://localhost:8080/records/
 ```
 
 ## Documentation:

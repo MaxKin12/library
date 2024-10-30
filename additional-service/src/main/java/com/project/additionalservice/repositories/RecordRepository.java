@@ -13,7 +13,8 @@ import java.util.Optional;
 
 @Repository
 public interface RecordRepository extends JpaRepository<Record, Long> {
-    @Query("SELECT r FROM Record r WHERE r.takeTime is null or r.returnTime is null")
+    Optional<Record> findByBookId(Long bookId);
+    @Query("select r from Record r where r.takeTime is null or r.returnTime is null")
     Optional<List<Record>> findAvailableBooks();
     @Modifying
     @Transactional

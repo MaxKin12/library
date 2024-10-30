@@ -38,21 +38,21 @@ public class MainServiceController {
         return bookMapper.toDto(book);
     }
 
-    @PostMapping("/create")
+    @PostMapping("/")
     public ResponseEntity<BookDto> createBook(@RequestBody BookNoIdDto bookNoIdDto) {
         Book book = bookService.create(bookMapper.toNoIdModel(bookNoIdDto));
         client.addRecord(book.getId());
         return ResponseEntity.status(HttpStatus.OK).body(bookMapper.toDto(book));
     }
 
-    @PostMapping("/update/{id}")
+    @PatchMapping("/{id}")
     public BookDto updateBook(@RequestBody BookNoIdDto bookNoIdDto,
                               @PathVariable("id") Long bookId) {
         Book book = bookService.update(bookMapper.toNoIdModel(bookNoIdDto), bookId);
         return bookMapper.toDto(book);
     }
 
-    @PostMapping("/delete/{id}")
+    @DeleteMapping("/{id}")
     public void deleteBook(@PathVariable("id") Long bookId) {
         bookService.delete(bookId);
     }

@@ -28,13 +28,13 @@ public class AdditionalServiceController {
         return recordMapper.toListDto(records);
     }
 
-    @PostMapping("/update/{id}")
+    @PatchMapping("/{book_id}")
     public void updateBook(@RequestBody RecordNoIdsDto recordNoIdsDto,
-                                @PathVariable("id") Long bookId) {
+                                @PathVariable("book_id") Long bookId) {
         recordService.update(recordMapper.toNoIdsModel(recordNoIdsDto), bookId);
     }
 
-    @PostMapping("/add")
+    @PostMapping("/")
     public void addRecord (@RequestBody Long bookId) {
         recordService.saveRecord(bookId);
     }

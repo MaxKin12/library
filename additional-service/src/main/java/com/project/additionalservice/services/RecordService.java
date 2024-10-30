@@ -23,7 +23,7 @@ public class RecordService {
     }
 
     public void update(Record editedRecord, Long oldBookId) {
-        recordRepository.findById(oldBookId).orElseThrow(()-> new ResourceNotFoundException("Record with id " +
+        recordRepository.findByBookId(oldBookId).orElseThrow(()-> new ResourceNotFoundException("Record with book id " +
                 oldBookId + " not found"));
         recordRepository.updateRecordInfoByBookId(
                 oldBookId,
