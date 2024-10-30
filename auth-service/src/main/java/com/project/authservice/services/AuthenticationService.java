@@ -41,9 +41,6 @@ public class AuthenticationService {
     }
 
     public TokenDto getTokenDto(String jwtToken) {
-        TokenDto tokenDto = new TokenDto();
-        tokenDto.setToken(jwtToken);
-        tokenDto.setExpiresIn(jwtService.getExpirationTime());
-        return tokenDto;
+        return new TokenDto(jwtToken, jwtService.getExpirationTime());
     }
 }

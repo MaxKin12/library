@@ -1,9 +1,6 @@
 package com.project.authservice.dtos;
 
-import lombok.Data;
-
-@Data
-public class UserDto {
-    private String email;
-    private String password;
-}
+public record UserDto (
+        String email,
+        String password
+) {}

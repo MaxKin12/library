@@ -1,12 +1,9 @@
 package com.project.mainservice.dtos;
 
-import lombok.Data;
-
-@Data
-public class BookNoIdDto {
-    private String isbn;
-    private String title;
-    private String genre;
-    private String description;
-    private String author;
-}
+public record BookNoIdDto (
+        String isbn,
+        String title,
+        String genre,
+        String description,
+        String author
+) {}
