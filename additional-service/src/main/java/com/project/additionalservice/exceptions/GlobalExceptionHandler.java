@@ -7,23 +7,22 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
-    @ExceptionHandler
-    public ResponseEntity<RecordError> handleException(Exception e) {
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity<RecordError> handleResourceNotFoundException(Exception e) {
         e.printStackTrace();
-
-        if (e instanceof ResourceNotFoundException) {
-            return new ResponseEntity<>(new RecordError(HttpStatus.NOT_FOUND.value(), e.getMessage()),
-                    HttpStatus.NOT_FOUND);
-        }
-
-        if (e instanceof DBException) {
-            return new ResponseEntity<>(new RecordError(HttpStatus.BAD_REQUEST.value(), e.getMessage()),
-                    HttpStatus.BAD_REQUEST);
-        }
-
-        else {
-            return new ResponseEntity<>(new RecordError(HttpStatus.INTERNAL_SERVER_ERROR.value(),
-                    "Unknown internal server error"), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        return new ResponseEntity<>(new RecordError(HttpStatus.NOT_FOUND.value(), e.getMessage()),
+                HttpStatus.NOT_FOUND);
+    }
+    @ExceptionHandler(DBException.class)
+    public ResponseEntity<RecordError> handleDBException(Exception e) {
+        e.printStackTrace();
+        return new ResponseEntity<>(new RecordError(HttpStatus.BAD_REQUEST.value(), e.getMessage()),
+                HttpStatus.BAD_REQUEST);
+    }
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<RecordError> handleOtherExceptions(Exception e) {
+        e.printStackTrace();
+        return new ResponseEntity<>(new RecordError(HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                "Unknown internal server error"), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }
