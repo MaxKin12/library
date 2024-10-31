@@ -6,5 +6,5 @@ import org.springframework.web.bind.annotation.PostMapping;
 @FeignClient(name = "${client.application.name}", url = "${additional-service.url}")
 public interface AdditionalServiceClient {
     @PostMapping("/")
-    void addRecord (Long bookId);
+    void createRecord (Long bookId);
 }

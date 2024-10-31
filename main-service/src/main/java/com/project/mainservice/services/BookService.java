@@ -1,9 +1,15 @@
 package com.project.mainservice.services;
 
+import com.project.mainservice.clients.AdditionalServiceClient;
+import com.project.mainservice.dtos.BookDto;
+import com.project.mainservice.dtos.BookListDto;
+import com.project.mainservice.dtos.BookNoIdDto;
 import com.project.mainservice.exceptions.DBException;
 import com.project.mainservice.exceptions.ResourceNotFoundException;
+import com.project.mainservice.mappers.BookMapper;
 import com.project.mainservice.models.Book;
 import com.project.mainservice.repositories.BookRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -13,41 +19,51 @@ import java.util.List;
 @RequiredArgsConstructor
 public class BookService {
     private final BookRepository bookRepository;
+    private final BookMapper bookMapper;
+    private final AdditionalServiceClient client;
 
-    public List<Book> findAll() {
-        return bookRepository.findAll();
+    public BookListDto findAll() {
+        List<Book> books = bookRepository.findAll();
+        return bookMapper.toBookListDto(books);
     }
 
-    public Book findById(Long id) {
-        return bookRepository.findById(id).orElseThrow(()-> new ResourceNotFoundException("Book with id " +
+    public BookDto findById(Long id) {
+        Book book = bookRepository.findById(id).orElseThrow(()-> new ResourceNotFoundException("Book with id " +
                 id + " not found"));
+        return bookMapper.toDto(book);
     }
 
-    public Book findByIsbn(String isbn) {
-        return bookRepository.findByIsbn(isbn).orElseThrow(()-> new ResourceNotFoundException("Book with isbn " +
+    public BookDto findByIsbn(String isbn) {
+        Book book = bookRepository.findByIsbn(isbn).orElseThrow(()-> new ResourceNotFoundException("Book with isbn " +
                 isbn + " not found"));
+        return bookMapper.toDto(book);
     }
 
-    public Book create(Book book) {
+    @Transactional
+    public BookDto create(BookNoIdDto bookDto) {
         try {
-            return bookRepository.save(book);
+            Book book = bookRepository.save(bookMapper.toNoIdModel(bookDto));
+            client.createRecord(book.getId());
+            return bookMapper.toDto(book);
         } catch (Exception e) {
             throw new DBException(e);
         }
     }
 
-    public Book update(Book editedBook, Long oldBookId) {
-        bookRepository.findById(oldBookId).orElseThrow(()-> new ResourceNotFoundException("Record with id " +
-                oldBookId + " not found"));
-        bookRepository.updateRecordInfoByBookId(
-                oldBookId,
-                editedBook.getIsbn(),
-                editedBook.getTitle(),
-                editedBook.getGenre(),
-                editedBook.getDescription(),
-                editedBook.getAuthor()
-        );
-        return bookRepository.findById(oldBookId).orElseThrow(()-> new DBException("Invalid attempt to update user"));
+    @Transactional
+    public BookDto update(BookNoIdDto editedBookDto, Long oldBookId) {
+        Book book = bookRepository.findById(oldBookId)
+                .orElseThrow(()-> new ResourceNotFoundException("Book with id " + oldBookId + " not found"));
+        try {
+            book.setIsbn(editedBookDto.isbn());
+            book.setTitle(editedBookDto.title());
+            book.setGenre(editedBookDto.genre());
+            book.setDescription(editedBookDto.description());
+            book.setAuthor(editedBookDto.author());
+            return bookMapper.toDto(book);
+        } catch (Exception e) {
+            throw new DBException("Invalid attempt to update book");
+        }
     }
 
     public void delete(Long id) {
