@@ -9,13 +9,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-
+@RequestMapping("/records")
 @RestController
 @RequiredArgsConstructor
 public class AdditionalServiceController {
     private final RecordService recordService;
 
-    @GetMapping("/")
+    @GetMapping("")
     public ResponseEntity<RecordListDto> getAllRecords() {
         RecordListDto recordListDto = recordService.findAll();
         return ResponseEntity.status(HttpStatus.OK).body(recordListDto);

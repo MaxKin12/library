@@ -9,12 +9,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+@RequestMapping("/books")
 @RestController
 @RequiredArgsConstructor
 public class MainServiceController {
     private final BookService bookService;
 
-    @GetMapping("/")
+    @GetMapping("")
     public ResponseEntity<BookListDto> getAllBooks() {
         BookListDto bookListDto = bookService.findAll();
         return ResponseEntity.status(HttpStatus.OK).body(bookListDto);
