@@ -1,6 +1,6 @@
 package com.project.gatewayservice.security;
 
-import com.project.gatewayservice.exceptions.TokenException;
+import com.project.gatewayservice.exception.TokenException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import lombok.RequiredArgsConstructor;
