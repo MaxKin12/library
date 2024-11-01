@@ -33,7 +33,7 @@ public class MainServiceController {
         return ResponseEntity.status(HttpStatus.OK).body(bookDto);
     }
 
-    @PostMapping("/")
+    @PostMapping("")
     public ResponseEntity<BookDto> createBook(@RequestBody BookNoIdDto bookNoIdDto) {
         BookDto bookDto = bookService.create(bookNoIdDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(bookDto);

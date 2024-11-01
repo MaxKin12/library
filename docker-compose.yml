@@ -1,29 +1,29 @@
 services:
   my-sql-books:
-    build:
-      dockerfile: Dockerfile
-      context: ./books-db
+    image: mysql:latest
     restart: always
+    volumes:
+      - ./init-db/init_book_db_script.sql:/docker-entrypoint-initdb.d/init_book_db_script.sql
     environment:
       MYSQL_ROOT_PASSWORD: $MYSQL_BOOKS_PASSWORD
     ports:
       - 3306
 
   my-sql-records:
-    build:
-      dockerfile: Dockerfile
-      context: ./records-db
+    image: mysql:latest
     restart: always
+    volumes:
+      - ./init-db/init_record_db_script.sql:/docker-entrypoint-initdb.d/init_record_db_script.sql
     environment:
       MYSQL_ROOT_PASSWORD: $MYSQL_RECORDS_PASSWORD
     ports:
       - 3306
 
   my-sql-users:
-    build:
-      dockerfile: Dockerfile
-      context: ./users-db
+    image: mysql:latest
     restart: always
+    volumes:
+      - ./init-db/init_user_db_script.sql:/docker-entrypoint-initdb.d/init_user_db_script.sql
     environment:
       MYSQL_ROOT_PASSWORD: $MYSQL_USERS_PASSWORD
     ports:
@@ -48,7 +48,7 @@ services:
       eureka.client.service-url.defaultZone: http://eureka-service:8761/eureka/
 
       client.application.name: additional-service
-      additional-service.url: http://additional-service:8082/
+      additional-service.url: http://additional-service:8082/records
     ports:
       - 8081
 

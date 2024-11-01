@@ -34,7 +34,7 @@ public class AdditionalServiceController {
         return ResponseEntity.status(HttpStatus.OK).body(recordDto);
     }
 
-    @PostMapping("/")
+    @PostMapping("")
     public ResponseEntity<RecordDto> createRecord (@RequestBody Long bookId) {
         RecordDto recordDto = recordService.create(bookId);
         return ResponseEntity.status(HttpStatus.CREATED).body(recordDto);
