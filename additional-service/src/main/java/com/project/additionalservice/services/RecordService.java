@@ -9,12 +9,15 @@ import com.project.additionalservice.mappers.RecordMapper;
 import com.project.additionalservice.models.Record;
 import com.project.additionalservice.repositories.RecordRepository;
 import jakarta.transaction.Transactional;
+import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
 
 import java.util.List;
 
 @Service
+@Validated
 @RequiredArgsConstructor
 public class RecordService {
     public final RecordRepository recordRepository;
@@ -32,7 +35,8 @@ public class RecordService {
     }
 
     @Transactional
-    public RecordDto update(RecordNoIdsDto editedRecord, Long oldBookId) {
+    public RecordDto update(RecordNoIdsDto editedRecord,
+                            @Positive(message = "id must be positive number") Long oldBookId) {
         Record record = recordRepository.findByBookId(oldBookId)
                 .orElseThrow(()-> new ResourceNotFoundException("Record with book id " + oldBookId + " not found"));
         try {
@@ -44,7 +48,7 @@ public class RecordService {
         }
     }
 
-    public RecordDto create(Long bookId) {
+    public RecordDto create(@Positive(message = "id must be positive number") Long bookId) {
         Record record = new Record();
         record.setBookId(bookId);
         try {

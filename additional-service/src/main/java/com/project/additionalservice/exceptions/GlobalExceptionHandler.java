@@ -1,5 +1,6 @@
 package com.project.additionalservice.exceptions;
 
+import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -15,6 +16,12 @@ public class GlobalExceptionHandler {
     }
     @ExceptionHandler(DBException.class)
     public ResponseEntity<RecordError> handleDBException(Exception e) {
+        e.printStackTrace();
+        return new ResponseEntity<>(new RecordError(HttpStatus.BAD_REQUEST.value(), e.getMessage()),
+                HttpStatus.BAD_REQUEST);
+    }
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity<RecordError> handleValidationException(Exception e) {
         e.printStackTrace();
         return new ResponseEntity<>(new RecordError(HttpStatus.BAD_REQUEST.value(), e.getMessage()),
                 HttpStatus.BAD_REQUEST);

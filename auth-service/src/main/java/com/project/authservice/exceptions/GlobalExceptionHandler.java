@@ -1,5 +1,6 @@
 package com.project.authservice.exceptions;
 
+import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AccountStatusException;
@@ -38,6 +39,12 @@ public class GlobalExceptionHandler {
         e.printStackTrace();
         return new ResponseEntity<>(new AuthError(HttpStatus.BAD_REQUEST.value(),
                 e.getMessage()), HttpStatus.BAD_REQUEST);
+    }
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity<AuthError> handleValidationException(Exception e) {
+        e.printStackTrace();
+        return new ResponseEntity<>(new AuthError(HttpStatus.BAD_REQUEST.value(), e.getMessage()),
+                HttpStatus.BAD_REQUEST);
     }
     @ExceptionHandler(Exception.class)
     public ResponseEntity<AuthError> handleOtherExceptions(Exception e) {

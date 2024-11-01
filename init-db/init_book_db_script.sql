@@ -42,9 +42,9 @@ CREATE TABLE `book` (
 
 LOCK TABLES `book` WRITE;
 /*!40000 ALTER TABLE `book` DISABLE KEYS */;
-INSERT INTO `book` VALUES (1,'Lew Tolstoy','french dictionary','sleeping pill','1234567890123','War and Peace'),
-                          (2,'Conan Doyle','lorem','detective','1234567890256','Sherlok Holmes'),
-                          (3,'Steven King','ipsum','horror','1234567890896','The Shining');
+INSERT INTO `book` VALUES (1,'Lew Tolstoy','french dictionary','sleeping pill','9784567890123','War and Peace'),
+                          (2,'Conan Doyle','lorem','detective','9794567890256','Sherlok Holmes'),
+                          (3,'Steven King','ipsum','horror','9794567890896','The Shining');
 /*!40000 ALTER TABLE `book` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;

@@ -15,7 +15,7 @@ public class Book {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="id")
     private Long id;
-    @Column(name="isbn", unique = true, nullable = false, length = 17)
+    @Column(name="isbn", unique = true, nullable = false, length = 13)
     private String isbn;
     @Column(name="title", nullable = false, length = 50)
     private String title;
